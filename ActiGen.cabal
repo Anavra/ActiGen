@@ -2,13 +2,13 @@ name:                ActiGen
 version:             0.1.0.0
 -- synopsis:
 -- description:
-homepage:            https://github.com/lboklin/ActiGen#readme
-license:             BSD3
+homepage:            https://github.com/Anavra/ActiGen#readme
+license:             LGPL-3
 license-file:        LICENSE
-author:              Ludvig Böklin
-maintainer:          ludvig.boklin@protonmail.com
-copyright:           (c) 2017 Ludvig Böklin
-category:            Web
+author:              Vanessa Rojas
+maintainer:          vanessa.rojas@protonmail.com
+copyright:           (c) 2017 Vanessa Rojas
+category:            tool
 build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md
