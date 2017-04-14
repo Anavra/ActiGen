@@ -12,18 +12,19 @@ activities = [ (Activity "Draw"            [ "Artistic","Relaxing"])  :: Activit
              , (Activity "Game"            [ "Mind", "Exciting"])     :: Activity
              ]
 
-data Activity = Activity Description [Tag] deriving (Show)
+data Activity = Activity Description [Tag] deriving (Show, Eq)
 
 randomActivity :: [Activity] -> StdGen -> Activity
 randomActivity acts stdGen = (acts !!) . fst $ randomR (0, length activities - 1) stdGen
 
-randomActivities :: [Activity] -> Int -> StdGen -> [Activity]
-randomActivities acs c g
+randomActivities :: Int -> [Activity] -> StdGen -> [Activity]
+randomActivities c acs g
+    | acs == [] = error "No activities exist."
     | c <= 0    = error $ "Unable to make a list of " ++ (show c) ++ " activities."
     | c == 1    = [randomActivity acs g]
     | otherwise = (rAc:rAcs)
           where rAc  = randomActivity acs g
-                rAcs = randomActivities acs (c - 1) nG
+                rAcs = randomActivities (c - 1) acs nG
                 nG = snd $ next g
 
 -- prop_randomActivity :: Int -> Bool

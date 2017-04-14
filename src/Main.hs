@@ -1,10 +1,11 @@
 module Main where
 
-import           System.Console.GetOpt
+-- import           System.Console.GetOpt
 import           System.Random
+-- import           Text.Read
+import           Data.Maybe
 import           System.Environment (getArgs, lookupEnv)
 
-import           Data.Maybe         (fromMaybe)
 import           System.Directory   (createDirectoryIfMissing)
 
 import           Activity
@@ -14,21 +15,21 @@ main = do
     args <- getArgs
     g    <- newStdGen
     -- | Generate random activities and join them into a single string with newlines
-    let output | argc <= 0 = "Too few arguments given."
-               | argc == 1 = unlines $ map show aList
-               | argc == 2 = "2 arguments given. This does nothing right now."
-               -- | argc == 2 = do
-               --     case arg1 of
-               --     return $ addNew (args !! 1)
-               | argc >= 3 = "Too many arguments given."
-               | otherwise = "Something is not right with the arguments."
-             where
-               argc        = length args
-               aList       = randomActivities activities arg1 g
-               cArg        = read $ head args
-               cArgDefault = 0
-               arg1 | cArg >= 1 = cArg
-                    | otherwise = cArgDefault
+    -- let n = read $ fromMaybe "1" $ listToMaybe args :: Int
+    let output
+          | argc == 0 = "No arguments given, assuming "
+                        ++ show numberArg
+                        ++ " activity.\n"
+                        ++ getAcList
+          | argc == 1 = getAcList
+          | argc == 2 = "2 arguments given. This does nothing right now."
+          | argc >= 3 = "Too many arguments given."
+          | otherwise = "Something is not right with the arguments."
+            where
+            argc              = length args
+            getAcList         = unlines $ map show $ acList numberArg
+            acList n          = randomActivities n activities g
+            numberArg         = read $ fromMaybe "1" $ listToMaybe args :: Int
     putStrLn output
 
 data Flag = Verbose | Version | Help
@@ -36,15 +37,25 @@ data Flag = Verbose | Version | Help
           | Remove Activity
             deriving (Show)
 
-options :: [OptDescr Flag]
-options = [ Option ['a'] ["add", "new"] (ReqArg addNew "") "Add a new activity"
-          ]
+mkActiList :: Int -> IO ()
+mkActiList n = do
+    g <- newStdGen
+    let actis = randomActivities n activities g
+    let actiList = unlines $ map show actis
+    putStrLn actiList
+
+
+
+-- options :: [OptDescr Flag]
+-- options = [ Option ['v'] ["verbose"] (NoArg Verbose) "Add a new activity"
+--           , Option ['a'] ["add", "new"] (ReqArg addNew "") "Add a new activity"
+--           ]
+
+-- addNew :: String -> Flag
+-- addNew acString = AddNew $ activities !! 0
 
 fileName :: FilePath
 fileName = "activities.txt"
-
-addNew :: String -> Flag
-addNew acString = AddNew $ activities !! 0
 
 appendNew :: Activity -> IO ()
 appendNew ac = do
